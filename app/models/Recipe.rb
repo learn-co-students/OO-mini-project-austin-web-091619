@@ -1,10 +1,10 @@
 class Recipe
-    attr_accessor :users, :ingredients
+    attr_accessor :ingredients, :users
     @@all = []
 
-    def initialize(users, ingredients.to_a)
-        @users = users
+    def initialize(ingredients)
         @ingredients = ingredients
+        RecipeIngredient.new(ingredients, self)
         @@all << self
     end
 
@@ -19,7 +19,7 @@ class Recipe
     def users
         RecipeCard.all.select do |rc|
             if rc.recipe == self
-                rc.users
+                rc.user
             end
         end
     end
@@ -37,7 +37,7 @@ class Recipe
     end
 
     def add_ingredients(ingredient)
-        ingredients.each do |i|
+        ingredient.each do |i|
             @ingredients << i 
         end
         @ingredients

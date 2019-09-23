@@ -12,7 +12,14 @@ class Ingredient
     end
 
     def self.most_common_allergen
-        Allergy.all.max_by {|a| a.ingredient.count(a)}
+        most_common = Allergy.all
+        hash = Hash.new(0)
+        most_common.each do |allergen|
+            hash[allergen] += 1
+        end
+        yes = hash.max_by{ |k, v| v }[0]
+        yes.ingredient
     end
+
 
 end

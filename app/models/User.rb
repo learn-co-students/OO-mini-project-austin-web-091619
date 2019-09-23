@@ -1,5 +1,6 @@
 require_relative "RecipeCard"
 require_relative "Allergy"
+require 'set'
 class User
     attr_accessor :name
     @@all = []
@@ -14,7 +15,7 @@ class User
     end
 
     def recipes
-        Recipe.all.select {|recipe| receipe.user == self}
+        Recipe.all.select {|recipe| recipe.users == self}
     end
 
     def add_recipe_card(recipe, date, rating)
@@ -30,14 +31,25 @@ class User
     end
 
     def top_three_recipes
-        order = RecipeCard.all.sort_by!(RecipeCard.rating)
+        my_recipes = RecipeCard.all.select { |recipecard| recipecard.user == self }
+        order = my_recipes.sort_by{ |rc| rc.rating }
         top_three = []
-        top_three.push(order[0], order[1], order[2])
+        top_three << order[-1].recipe
+        top_three << order[-2].recipe
+        top_three << order[-3].recipe
         top_three
+
     end
 
     def most_recent_recipe
-        Recipe.all[-1]
+        my_recipes = RecipeCard.all.select { |r| r.user == self}
+        my_recipes[-1].recipe   
+        #needs to be for one particular user, recipecard is used because each user creats cards when they use a recipe.
     end
 
+    def safe_recipes
+        recipes.reject do |recipe|
+            recipe.ingredients.any? { |ingredient| allergens.include?(ingredient)}
+    end
+end
 end        
